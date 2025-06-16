@@ -1,29 +1,42 @@
-
+import os
+import copy
+import requests
 from utils.api_json import create_pipeline
 from utils.generate_parameters import generate_random_params
-if valohai.parameters('cycle').value == 1:
+import valohai
 
-    # Generate new set of params:
-    epochs_list, lr_list = generate_random_params(num_configs=5)
+if valohai.parameters('cycle').value == 1:
+    # Generate new set of params
+    new_epochs, new_lr = generate_random_params(num_configs=3)
 
     api_token = os.environ["VALOHAI_API_TOKEN"]
 
+    # Deepcopy to avoid mutating the original template
+    json_with_new_parameters = copy.deepcopy(create_pipeline)
 
-    # edit json
-    json_with_new_parameters = create_pipeline.deepcopy()
+    # Find the "preprocess" node and update parameters
+    for node in json_with_new_parameters["nodes"]:
+        if node["name"] == "preprocess":
+            node["template"]["parameters"]["epochs"]["rules"]["value"] = new_epochs
+            node["template"]["parameters"]["learning_rate"]["rules"]["value"] = new_lr
+            break
 
+    # Optionally update pipeline title to reflect the cycle
+    json_with_new_parameters["title"] = f"train-dynamic-pipeline-cycle"
 
-    resp = requests.request(
+    # POST request to Valohai API
+    resp = requests.post(
         url="https://app.valohai.com/api/v0/pipelines/",
-        method="POST",
         headers={"Authorization": f"Token {api_token}"},
-        json={
-            "project": project_id,
-            "commit": "main",
-            "name": "train-val-pipeline",
-        },
+        json=json_with_new_parameters,
     )
+
     if resp.status_code == 400:
         raise RuntimeError(resp.json())
     resp.raise_for_status()
+
     data = resp.json()
+    print("Pipeline created:", data.get("url", "No URL found"))
+
+else:
+    print("No cycle pipeline required, we reached the best set of parameters")

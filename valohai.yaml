@@ -13,19 +13,16 @@
         default: [ 5 ]
         type: integer
         multiple: separate
-        multiple-separator: ','
         optional: true
       - name: learning_rate
         default: [ 0.001 ]
         type: float
         multiple: separate
-        multiple-separator: ','
         optional: true
       - name: seed
         default: [ 221 ]
         type: integer
         multiple: separate
-        multiple-separator: ','
         optional: true
 
 - step:
@@ -85,7 +82,7 @@
         optional: true
 
 - pipeline:
-    name: cycle-dynamic-pipeline
+    name: train-dynamic-pipeline
     nodes:
       - name: preprocess
         type: execution
