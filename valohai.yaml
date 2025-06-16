@@ -108,4 +108,4 @@
       - [preprocess.metadata.learning_rate, train.parameter.learning_rate]
       - [train.output.model*, evaluate.input.model]
       - [evaluate.output.*.json, find-best-model.input.predictions]
-      - [find-best-model.metadata.cycle, start-cycle.input.parameter.cycle]
+      - [find-best-model.metadata.cycle, start-cycle.parameter.cycle]
