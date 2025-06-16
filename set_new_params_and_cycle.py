@@ -9,6 +9,10 @@ if valohai.parameters('cycle').value == 1:
     # Generate new set of params
     new_epochs, new_lr = generate_random_params(num_configs=3)
 
+    print("New set of parameters generated for cycle pipeline: ")
+    print("Epochs: ", new_epochs)
+    print("Learning rate: ", new_lr)
+
     api_token = os.environ["VALOHAI_API_TOKEN"]
 
     # Deepcopy to avoid mutating the original template
