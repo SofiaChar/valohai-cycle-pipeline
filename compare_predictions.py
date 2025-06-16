@@ -78,7 +78,7 @@ def main():
         with open(metadata_path, 'w') as outfile:
             json.dump(metadata, outfile)
 
-    if float(best_of_best.average_best_guess) < 0.99:
+    if float(best_of_best.average_best_guess) < 0.9999:
         print(json.dumps({'cycle': 1}))
 
 
