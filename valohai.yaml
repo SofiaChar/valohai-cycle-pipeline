@@ -76,11 +76,6 @@
         default: 0
         optional: false
 
-    inputs:
-      - name: predictions
-      - name: models
-        optional: true
-
 - pipeline:
     name: train-dynamic-pipeline
     nodes:
