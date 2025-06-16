@@ -1,0 +1,114 @@
+---
+- step:
+    name: preprocess-dataset
+    image: python:3.9
+    command:
+      - pip install numpy valohai-utils
+      - python ./preprocess_dataset.py
+    inputs:
+      - name: dataset
+        default: https://valohaidemo.blob.core.windows.net/mnist/mnist.npz
+    parameters:
+      - name: epochs
+        default: [ 5 ]
+        type: integer
+        multiple: separate
+        multiple-separator: ','
+        optional: true
+      - name: learning_rate
+        default: [ 0.001 ]
+        type: float
+        multiple: separate
+        multiple-separator: ','
+        optional: true
+      - name: seed
+        default: [ 221 ]
+        type: integer
+        multiple: separate
+        multiple-separator: ','
+        optional: true
+
+- step:
+    name: train-model
+    image: tensorflow/tensorflow:2.6.0
+    command:
+      - pip install valohai-utils
+      - python ./train_model.py {parameters}
+    parameters:
+      - name: epochs
+        type: integer
+      - name: learning_rate
+        type: float
+    inputs:
+      - name: dataset
+        default: https://valohaidemo.blob.core.windows.net/mnist/preprocessed_mnist.npz
+
+- step:
+    name: batch-inference
+    image: tensorflow/tensorflow:2.6.0
+    command:
+    - pip install pillow valohai-utils
+    - python ./batch_inference.py
+    inputs:
+    - name: model
+    - name: images
+      default:
+      - https://valohaidemo.blob.core.windows.net/mnist/four-inverted.png
+      - https://valohaidemo.blob.core.windows.net/mnist/five-inverted.png
+      - https://valohaidemo.blob.core.windows.net/mnist/five-normal.jpg
+
+- step:
+    name: compare-predictions
+    image: python:3.9
+    command:
+      - pip install numpy valohai-utils
+      - python ./compare_predictions.py
+    inputs:
+      - name: predictions
+      - name: models
+        optional: true
+
+- step:
+    name: set-new-parameters
+    image: python:3.9
+    command:
+      - pip install numpy valohai-utils
+      - python ./set_new_params_and_cycle.py
+    parameters:
+      - name: cycle
+        default: 0
+        optional: false
+
+    inputs:
+      - name: predictions
+      - name: models
+        optional: true
+
+- pipeline:
+    name: cycle-dynamic-pipeline
+    nodes:
+      - name: preprocess
+        type: execution
+        step: preprocess-dataset
+      - name: train
+        type: task
+        step: train-model
+        override:
+          inputs:
+            - name: dataset
+      - name: evaluate
+        type: execution
+        step: batch-inference
+      - name: find-best-model
+        type: execution
+        step: compare-predictions
+      - name: start-cycle
+        type: execution
+        step: set-new-parameters
+    edges:
+      - [preprocess.output.preprocessed_mnist.npz, train.input.dataset]
+      - [preprocess.metadata.epochs, train.parameter.epochs]
+      - [preprocess.metadata.learning_rate, train.parameter.learning_rate]
+      - [train.output.model*, evaluate.input.model]
+      - [evaluate.output.*.json, find-best-model.input.predictions]
+      - [find-best-model.metadata.cycle, start-cycle.input.parameter.cycle]
