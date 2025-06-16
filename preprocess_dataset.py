@@ -1,3 +1,5 @@
+import json
+
 import numpy as np
 import valohai
 
@@ -34,6 +36,8 @@ def main():
     path = valohai.outputs().path('preprocessed_mnist.npz')
     np.savez_compressed(path, x_train=x_train, y_train=y_train, x_test=x_test, y_test=y_test)
 
+    print(json.dumps({'epochs': valohai.parameters('epochs').value}))
+    print(json.dumps({'learning_rate': valohai.parameters('learning_rate').value}))
 
 if __name__ == '__main__':
     main()
