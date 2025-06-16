@@ -45,8 +45,8 @@ create_pipeline = {
       "source_key": "cycle",
       "source_type": "metadata",
       "target_node": "start-cycle",
-      "target_type": "input",
-      "target_key": "parameter.cycle"
+      "target_type": "parameter",
+      "target_key": "cycle"
     }
   ],
   "nodes": [
@@ -57,7 +57,7 @@ create_pipeline = {
       "edge_merge_mode": "replace",
       "template": {
         "environment": "0167d05d-a1d7-cc02-8256-6455a6ecfa56",
-        "commit": "1e25e008dd0a33dd52f300c723d851aa79772e28",
+        "commit": "main",
         "step": "preprocess-dataset",
         "image": "python:3.9",
         "command": "pip install numpy valohai-utils\npython ./preprocess_dataset.py",
@@ -106,7 +106,7 @@ create_pipeline = {
       "template": {
         "project": "019778e8-e9d6-7521-5d3d-5880cb41306b",
         "environment": "0167d05d-a1d7-cc02-8256-6455a6ecfa56",
-        "commit": "1e25e008dd0a33dd52f300c723d851aa79772e28",
+        "commit": "main",
         "step": "train-model",
         "image": "tensorflow/tensorflow:2.6.0",
         "command": "pip install valohai-utils\npython ./train_model.py {parameters}",
@@ -149,7 +149,7 @@ create_pipeline = {
       "edge_merge_mode": "replace",
       "template": {
         "environment": "0167d05d-a1d7-cc02-8256-6455a6ecfa56",
-        "commit": "1e25e008dd0a33dd52f300c723d851aa79772e28",
+        "commit": "main",
         "step": "batch-inference",
         "image": "tensorflow/tensorflow:2.6.0",
         "command": "pip install pillow valohai-utils\npython ./batch_inference.py",
@@ -177,7 +177,7 @@ create_pipeline = {
       "edge_merge_mode": "replace",
       "template": {
         "environment": "0167d05d-a1d7-cc02-8256-6455a6ecfa56",
-        "commit": "1e25e008dd0a33dd52f300c723d851aa79772e28",
+        "commit": "main",
         "step": "compare-predictions",
         "image": "python:3.9",
         "command": "pip install numpy valohai-utils\npython ./compare_predictions.py",
@@ -201,14 +201,11 @@ create_pipeline = {
       "edge_merge_mode": "replace",
       "template": {
         "environment": "0167d05d-a1d7-cc02-8256-6455a6ecfa56",
-        "commit": "1e25e008dd0a33dd52f300c723d851aa79772e28",
+        "commit": "main",
         "step": "set-new-parameters",
         "image": "python:3.9",
         "command": "pip install numpy valohai-utils\npython ./set_new_params_and_cycle.py",
-        "inputs": {
-          "predictions": [],
-          "models": []
-        },
+        "inputs": {},
         "parameters": {
           "cycle": {
             "style": "single",
@@ -229,5 +226,5 @@ create_pipeline = {
   "project": "019778e8-e9d6-7521-5d3d-5880cb41306b",
   "tags": [],
   "parameters": {},
-  "title": "cycle-dynamic-pipeline"
+  "title": "train-dynamic-pipeline"
 }
