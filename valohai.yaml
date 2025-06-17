@@ -8,6 +8,8 @@
     inputs:
       - name: dataset
         default: https://valohaidemo.blob.core.windows.net/mnist/mnist.npz
+      - name: info
+        optional: true
     parameters:
       - name: epochs
         default: [ 5 ]
@@ -75,6 +77,9 @@
       - name: cycle
         default: 0
         optional: false
+    inputs:
+      - name: predictions
+        optional: true
 
 - pipeline:
     name: train-dynamic-pipeline
@@ -104,3 +109,4 @@
       - [train.output.model*, evaluate.input.model]
       - [evaluate.output.*.json, find-best-model.input.predictions]
       - [find-best-model.metadata.cycle, start-cycle.parameter.cycle]
+      - [find-best-model.input.predictions, start-cycle.input.predictions]

@@ -80,6 +80,8 @@ def main():
 
     if float(best_of_best.average_best_guess) < 0.9999:
         print(json.dumps({'cycle': 1}))
+    else:
+        print(json.dumps({'cycle': 0}))
 
 
 if __name__ == '__main__':
