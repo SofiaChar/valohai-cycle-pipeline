@@ -47,6 +47,14 @@ create_pipeline = {
       "target_node": "start-cycle",
       "target_type": "parameter",
       "target_key": "cycle"
+    },
+    {
+      "source_node": "find-best-model",
+      "source_key": "predictions",
+      "source_type": "input",
+      "target_node": "start-cycle",
+      "target_type": "input",
+      "target_key": "predictions"
     }
   ],
   "nodes": [
@@ -64,7 +72,8 @@ create_pipeline = {
         "inputs": {
           "dataset": [
             "https://valohaidemo.blob.core.windows.net/mnist/mnist.npz"
-          ]
+          ],
+          "info": []
         },
         "parameters": {
           "epochs": {
@@ -205,7 +214,9 @@ create_pipeline = {
         "step": "set-new-parameters",
         "image": "python:3.9",
         "command": "pip install numpy valohai-utils\npython ./set_new_params_and_cycle.py",
-        "inputs": {},
+        "inputs": {
+          "predictions": []
+        },
         "parameters": {
           "cycle": {
             "style": "single",
