@@ -1,9 +1,10 @@
 import os
 import copy
 import requests
-from utils.api_json import create_pipeline
-from utils.generate_parameters import generate_random_params
 import valohai
+from utils.api_json import create_pipeline
+from utils.utils import generate_random_params, get_prediction_datum_id
+
 
 if valohai.parameters('cycle').value == 1:
     # Generate new set of params
@@ -12,6 +13,9 @@ if valohai.parameters('cycle').value == 1:
     print("New set of parameters generated for cycle pipeline: ")
     print("Epochs: ", new_epochs)
     print("Learning rate: ", new_lr)
+
+    datum_id = get_prediction_datum_id()[0]
+    print('datum ', datum_id)
 
     api_token = os.environ["VALOHAI_API_TOKEN"]
 
@@ -23,6 +27,8 @@ if valohai.parameters('cycle').value == 1:
         if node["name"] == "preprocess":
             node["template"]["parameters"]["epochs"]["rules"]["value"] = new_epochs
             node["template"]["parameters"]["learning_rate"]["rules"]["value"] = new_lr
+
+            node["template"]["inputs"]["info"] = [f"datum://{datum_id}"]
             break
 
     # Optionally update pipeline title to reflect the cycle
